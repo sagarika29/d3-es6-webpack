@@ -48,6 +48,7 @@ module.exports = {
         ]
     },
     plugins: [
+        new webpack.optimize.CommonsChunkPlugin({name: "vendor", minChunks: Infinity,}),
         new webpack.optimize.UglifyJsPlugin(),
         new HtmlWebpackPlugin({template: './src/index.html'}),
         new ExtractTextPlugin("styles/app.css")
