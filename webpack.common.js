@@ -1,10 +1,10 @@
 "use strict";
 
-const webpack = require('webpack');
-const ExtractTextPlugin = require("extract-text-webpack-plugin");
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-
-const path = require('path');
+const webpack            = require('webpack');
+const path               = require('path');
+const ExtractTextPlugin  = require("extract-text-webpack-plugin");
+const HtmlWebpackPlugin  = require('html-webpack-plugin');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
 
 module.exports = {
     entry: {
@@ -23,7 +23,7 @@ module.exports = {
                 use: {
                     loader: 'babel-loader',
                     options: {
-                        presets: ['es2015']
+                        presets: ['env']
                     }
                 }
             },
@@ -45,12 +45,17 @@ module.exports = {
                     use: "css-loader"
                 })
             }
+
         ]
     },
     plugins: [
+        new CleanWebpackPlugin(['dist']),
         new webpack.optimize.CommonsChunkPlugin({name: "vendor", minChunks: Infinity,}),
-        new webpack.optimize.UglifyJsPlugin(),
-        new HtmlWebpackPlugin({template: './src/index.html'}),
+        new HtmlWebpackPlugin({
+            template: './src/index.html',
+            filename: 'index.html',
+            inject: 'body'
+        }),
         new ExtractTextPlugin("styles/app.css")
     ]
 
