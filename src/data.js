@@ -189,11 +189,13 @@ export default [
           "cities":[
             {
               "id":"111",
-              "name":"München"
+              "name":"München",
+              "abbreviation":"München",
             },
             {
               "id":"112",
-              "name":"Hamburg"
+              "name":"Hamburg",
+              "abbreviation":"Hamburg",
             }
           ]
         },
@@ -206,11 +208,13 @@ export default [
           "cities":[
             {
               "id":"111",
-              "name":"München"
+              "name":"München",
+              "abbreviation":"München",
             },
             {
               "id":"113",
-              "name":"Berlin"
+              "name":"Berlin",
+              "abbreviation":"Berlin",
             }
           ]
         }
@@ -280,18 +284,85 @@ export default [
           {
             "id":"111",
             "name":"München",
-            "type":"city"
+            "type":"city",
+            "abbreviation":"München",
+            "project_id" : "1"
           },
           {
             "id":"112",
             "name":"Hamburg",
-            "type":"city"
+            "type":"city",
+            "abbreviation":"Hamburg",
+            "project_id" : "1"
           },
           {
             "id":"113",
             "name":"Berlin",
-            "type":"city"
+            "type":"city",
+            "abbreviation":"Berlin",
+            "project_id" : "2"
           }
           ]
+      },
+      {
+        "name" : "O2C",
+        "values" : [
+            {
+                "id": "111111",
+                "source": {
+                  "id": "6z0w71hmmovm",
+                  "name": "Robert Bosch GmbH",
+                  "abbreviation": "Bosch"
+                },
+                "target": {
+                  "id":"111",
+                  "name":"München",
+                  "abbreviation":"München",
+                  "type":"city"
+                }
+            },
+            {
+                "id" : "1112",
+                "source": {
+                  "id": "10g6c72mp5cq9",
+                  "name": "Car systems Scheil GmbH & Co. KG.",
+                  "abbreviation": "car systems Scheil"
+                },
+                "target": {
+                  "id":"113",
+                  "name":"Berlin",
+                  "abbreviation":"Berlin",
+                  "type":"city"
+                }
+            },
+            {
+                "id" : "1113",
+                "source": {
+                  "id": "1hhoclgtpf4lh",
+                  "name": "BMW AG",
+                  "abbreviation": "BMW",
+                },
+                "target": {
+                  "id":"111",
+                  "name":"München",
+                  "abbreviation":"München",
+                  "type":"city"
+                }
+            },
+            {
+                "id" : "1114",
+                "source": {
+                    "id": "t2ith4r96ury",
+                    "name": "Siemens AG",
+                    "abbreviation": "Siemens",
+                },
+                "target": {
+                    "id":"112",
+                    "name":"Hamburg",
+                    "abbreviation":"Hamburg",
+                    "type":"city"
+                }
+            }
+          ] 
       }
 ]
