@@ -35,6 +35,8 @@ let services = organizations.reduce((categories, organization) => {
     return categories;
 }, {});
 const categories = [...new Set(organizations.map(o => o.category))];
+const relation_categories = [...new Set(relations.map(o => o.category))];
+
 let color = d3.scaleOrdinal().range(d3.schemeCategory10.map(c => {
     c = d3.rgb(c);
     c.opacity = 0.6;
@@ -48,6 +50,8 @@ const canvas = {
     height: svgHeight
 };
 let width = canvas.width, height = canvas.height;
+
+
 let root = d3.hierarchy({
     name: 'services',
     children: Object.values(services)
@@ -57,6 +61,7 @@ let cluster = d3.cluster().size([
     width / 2 - 265
 ]);
 cluster(root);
+
 let circle = svg.append('circle').attr('cx', width / 2).attr('cy', height / 2).attr('r', width / 2 - 265).attr('fill', '#F0F0F0');//height / 2 - 60 -> height / 2
 let g = svg.append('g').attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')');
 let nodes = root.descendants().filter(n => !n.children);
@@ -101,32 +106,15 @@ edges.append('path').attr('class', 'link').attr('d', d => {
     let target = getNodeById(nodes, d.target.id);
     return line(source.path(target));
 }).attr('stroke', d => color(d.category)).attr('stroke-width', 0.3).attr('fill', 'none').attr('pointer-events', 'none');
+
 const legend = svg.append('g').attr('class', 'options').attr('transform', 'translate(' + [
     width - legendWidth + 100,
     height / 4
-] + ')').selectAll('g.legend').data(categories).enter().append('g').attr('class', 'legend').attr('transform', (d, index) => 'translate(' + [
+] + ')').selectAll('g.legend').data(relation_categories).enter().append('g').attr('class', 'legend').attr('transform', (d, index) => 'translate(' + [
     0,
     index * 30 + 5
 ] + ')');
 legend.append('rect').attr('x', 0).attr('y', 0).attr('width', 15).attr('height', 15).attr('fill', d => color(d));
 legend.append('text').text(d => d).attr('x', 20).attr('dy', 10).attr('font-size', '12px');
-legend.append("foreignObject")
-    .attr("width", 100)
-    .attr("height", 100)
-    .append("xhtml:body")
-    .html(`<input type=checkbox id="check" />`)
-    .on("click", function (d, i, elem) {
-        d3.select(elem[i].children[0]).attr("class", d);
-            if (d3.select(elem[i].children[0]).property("checked") === true) {
-                const updatedOrganizations = [];
-                organizations.map(org=>{
-                    if(org.category === d)
-                    updatedOrganizations.push(org);
-                })
-                console.log(updatedOrganizations);
-            }
-            else{
-                d3.select(elem[i].children[0]).attr("checked", false);
-            }
-    });
+
  }

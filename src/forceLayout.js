@@ -10,7 +10,7 @@ import data from './data';
         height: height
     };
     const organizations = data[data.map(item => item.name).indexOf('Organizations')].values;
-    const relations = data[data.map(item => item.name).indexOf('Relations')].values.filter(link => link.source.id !== null && link.target.id !== null); // Null check in data of relations
+    const relations = data[data.map(item => item.name).indexOf('Relations')].values.filter(link =>link.source && link.source.id !== null && link.target && link.target.id !== null); // Null check in data of relations
     const categories = [...new Set(organizations.map(o => o.category))];
     let nodes = [...organizations];
     let links = relations.map(relation => Object.assign({}, {
@@ -98,7 +98,13 @@ import data from './data';
         .html(`<input type=checkbox id="check" />`)
         .on("click", function (d, i, elem) {
             d3.select(elem[i].children[0]).attr("class", d);
+            
+            
             if (d3.select(elem[i].children[0]).property("checked") === true) {
+                elem.forEach((el)=>{
+                    if(el != elem[i])    
+                    d3.select(el.children[0]).property("checked",false);
+                })
                 const activeLegendItem = d;
                 const activeNodes = nodes.filter(node => node.category === activeLegendItem).map(node => node);
                 const selectedNodes = relation_node(nodes.filter(node => node.category === activeLegendItem).map(node => node))
