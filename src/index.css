@@ -1,0 +1,9 @@
+.link_continuous {
+    fill: none;
+    stroke-width: 3px;
+}
+.link_dashed {
+    fill: none;
+    stroke-width: 3px;
+    stroke-dasharray: 10,10,10,10,10,10;
+}
