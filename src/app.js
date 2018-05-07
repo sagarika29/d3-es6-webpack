@@ -73,6 +73,6 @@ new_force_button_2.addEventListener("click", () => {
 
 per2org_button.addEventListener("click", () => {
     svg.selectAll('*').remove();
-    svg.attr('width',1200).attr('height',1100);
+    svg.attr('width',1200).attr('height',1000);
     per2org(svg);
 });

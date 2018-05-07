@@ -10,16 +10,9 @@ export function per2org(svg){
         height: height
     };
 
-    const links = data.map(d=>Object.assign({},{
-        data:d,
-        source:d.Organisation.id,
-        target:d.Person.id
-    }))
-    console.log(links);
     const organizations=data.map(d=>{return d.Organisation}).map(org=>Object.assign({},{
         data: org,
         id: org.id,
-        owns: "Organization",
         name: org.name,
         type: data.map((d,i)=>{if(d.Organisation.id==org.id){
             return d.type
@@ -31,7 +24,6 @@ export function per2org(svg){
     const persons=data.map(d=>{return d.Person}).map(person=>Object.assign({},{
         data: person,
         id: person.id,
-        owns: "Person",
         name: person.name,
         type: data.map((d,i)=>{if(d.Person.id==person.id){
             return d.type
@@ -40,10 +32,14 @@ export function per2org(svg){
             return d.status
         }})
     }))
-    
     let nodes=[...organizations,...persons];
-    
+    const links = data.map(d=>Object.assign({},{
+        data:d,
+        source:d.Organisation.id,
+        target:d.Person.id
+    }))
     let resArr = [];
+    let types =[...new Set(data.map(o => o.type))];
     nodes.filter((item)=>{
       let i = resArr.findIndex(x => x.id == item.id);
       if(i <= -1){
@@ -53,31 +49,34 @@ export function per2org(svg){
     });
     const radius=20;
     const color = d3.scaleOrdinal(d3.schemeCategory20);
-    let simulation = d3.forceSimulation().force('link', d3.forceLink().id(d => d.id)).force('charge', d3.forceManyBody().strength(-1000)).force('collide', d3.forceCollide().radius(radius + 35)).force('x', d3.forceX()).force('y', d3.forceY()).force('center', d3.forceCenter(canvas.width / 2, canvas.height / 2));
+    let simulation = d3.forceSimulation().force('link', d3.forceLink().id(d => d.id)).force('charge', d3.forceManyBody().strength(-600)).force('collide', d3.forceCollide().radius(radius + 20)).force('x', d3.forceX()).force('y', d3.forceY()).force('center', d3.forceCenter(canvas.width / 2, canvas.height / 3));
     
     let node = svg.append('g').attr('class', 'nodes').selectAll('g.node').data(resArr).enter().append('g').attr('class', 'node');
     let link = svg.append('g').data(links).attr('class','links').selectAll('line').data(links).enter().append('line').attr('class', (d)=> { return (d.data.status != "Derzeit") ? "link_dashed" : "link_continuous" ; }).attr('stroke', (d)=>{return color(d.data.type)}).attr('stroke-opacity', 0.2);
     
-    node.append('svg:foreignObject').attr("width", 50).attr("height", 50).attr("font-size",'30px').attr("fill","darkslategrey").append("xhtml:body").html((d)=>{if(d.owns == "Organization"){return '<i class="fa fa-warehouse"></i>'} else return '<i class="fa fa-user"></i>'});
-    node.append('text').text(d => d.name).attr('text-anchor', 'start').attr('font-size', '11px').attr('y','60');
+    node.append('svg:foreignObject').attr("width", 50).attr("height", 50).attr("font-size",'30px').attr("fill","darkslategrey").append("xhtml:body").html((d)=>{if(d.data.entityType == "Organization"){return '<i class="fa fa-warehouse"></i>'} else return '<i class="fa fa-user"></i>'});
+    node.append('text').text(d => d.name).attr('text-anchor', 'start').attr('font-size', '11px').attr('y','50');
     
-    const offset = (source, target, r) => {
-        const dx = source.x - target.x;
-       const dy = source.y - target.y;
-       const factor = r / Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
-       return {
-           x: dx * factor,
-           y: dy * factor
-       };
-   };
     const ticked = () => {
-        link.attr('x1', d => d.source.x - offset(d.source, d.target, radius).x).attr('y1', d => d.source.y - offset(d.source, d.target, radius).y).attr('x2', d => d.target.x - offset(d.target, d.source, radius).x).attr('y2', d => d.target.y - offset(d.target, d.source, radius).y); 
-        node.attr('transform', d => 'translate(' + [
-                 d.x = Math.max(radius + 3, Math.min(canvas.width - radius - 3, d.x)),
-                 d.y = Math.max(radius + 3, Math.min(canvas.height - radius - 3, d.y))
-        ] + ')');
+        link.attr("x1", function(d) { return d.source.x; })
+        .attr("y1", function(d) { return d.source.y + 28; })
+        .attr("x2", function(d) { return d.target.x; })
+        .attr("y2", function(d) { return d.target.y + 34; });
+      node.attr("transform", function(d) { return "translate(" + (d.x - 25 ) + "," + (d.y- 10) + ")"; });
     };
     
     simulation.nodes(resArr).on('tick', ticked);
     simulation.force("link").links(links);
+
+    const legend = svg.append('g').attr('class', 'options').attr('transform', 'translate(' + [
+        width - legendWidth + 100,
+        height / 4
+    ] + ')').selectAll('g.legend').data(types).enter().append('g').attr('class', 'legend').attr('transform', (d, index) => 'translate(' + [
+        0,
+        index * 30 + 5
+    ] + ')');
+    legend.append('rect').attr('x', 0).attr('y', 0).attr('width', 15).attr('height', 15).attr('fill', d => color(d));
+    legend.append('text').text(d => d).attr('x', 20).attr('dy', 10).attr('font-size', '12px');
+    
+     
 }
